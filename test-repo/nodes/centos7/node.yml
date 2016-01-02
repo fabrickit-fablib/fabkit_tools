@@ -1,5 +1,5 @@
 env:
-  port: 32022
+  port: 31022
 
 node_map:
   centos7:

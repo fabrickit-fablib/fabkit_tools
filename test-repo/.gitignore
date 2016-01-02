@@ -2,3 +2,5 @@ fablib
 storage
 databag
 *.pyc
+*.pickle
+__cluster.yml
