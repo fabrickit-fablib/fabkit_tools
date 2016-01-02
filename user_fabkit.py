@@ -8,15 +8,27 @@ from fablib.python import Python
 
 class UserFabkit(SimpleBase):
     def __init__(self):
-        pass
+        self.packages = {
+            'CentOS Linux 7.*': [
+                'httpd',
+            ],
+            'Ubuntu 14.*': [
+                'apache2'
+            ]
+        }
 
-    def init_before(self):
-        pass
-
-    def init_after(self):
-        pass
+        self.services = {
+            'CentOS Linux 7.*': [
+                'httpd',
+            ],
+            'Ubuntu 14.*': [
+                'apache2'
+            ]
+        }
 
     def setup(self):
+        self.install_packages()
+
         repo = '/home/{0}/fabkit-repo'.format(env.user)
         filer.mkdir(repo, use_sudo=False)
         git.setup()
