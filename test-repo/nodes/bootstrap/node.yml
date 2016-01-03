@@ -10,6 +10,7 @@ test_bootstrap:
     - name: centos7
       template: Dockerfile_centos7
       sudo_group: wheel
+      use_systemd: true
       ports:
         - [22, 31022]
         - [80, 31080]

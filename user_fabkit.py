@@ -28,6 +28,7 @@ class UserFabkit(SimpleBase):
 
     def setup(self):
         self.install_packages()
+        self.start_services().enable_services()
 
         repo = '/home/{0}/fabkit-repo'.format(env.user)
         filer.mkdir(repo, use_sudo=False)
@@ -41,3 +42,20 @@ class UserFabkit(SimpleBase):
             requirements='{0}/fabfile/requirements.txt'.format(repo))
 
         run('cd {0} && /opt/fabkit/bin/fab -l'.format(repo))
+
+        data = {
+            'port': 3306,
+            'repo': repo,
+            'user': env.user,
+            'group': env.user,
+            'python_path': python.get_site_packages(),
+            'processes': 5,
+            'threads': 1,
+        }
+
+        if filer.template(src='httpd.conf',
+                          dest='/etc/httpd/conf.d/{0}_httpd.conf'.format(env.user),
+                          data=data):
+            self.handlers['restart_httpd'] = True
+
+        self.exec_handlers()
