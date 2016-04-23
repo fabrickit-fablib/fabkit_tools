@@ -1,0 +1,31 @@
+mysql:
+  cluster_map:
+    common:
+      endpoint: ${#haproxy.cluster_map.common.host}:3306
+      hosts: ${#node_map.mysql.hosts}
+      port: 13306
+      dbs: [keystone, fabkit, fabkit_web]
+      user_map:
+        slave:
+          user: slave
+          password: slavepass
+          src_hosts:
+            - '192.168.122.0/255.255.255.0'
+          previleges: 'REPLICATION SLAVE'
+        openstack:
+          user: openstack
+          password: openstackpass
+          src_hosts:
+            - '192.168.122.0/255.255.255.0'
+            - 'localhost'
+          previleges: 'ALL PREVILEGES'
+        fabkit:
+          user: fabkit
+          password: fabkitpass
+          src_hosts:
+            - '192.168.122.0/255.255.255.0'
+            - 'localhost'
+          previleges: 'ALL PREVILEGES'
+
+      replication:
+        types: [master, master]

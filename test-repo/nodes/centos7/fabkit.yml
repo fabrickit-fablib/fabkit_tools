@@ -1,0 +1,7 @@
+fabkit_tools:
+  port: 10080
+  os_auth_url: http://192.168.122.55:35357/v2.0
+  os_tenant_name: service
+  os_username: service
+  os_password: service_password
+  clusters: centos7/

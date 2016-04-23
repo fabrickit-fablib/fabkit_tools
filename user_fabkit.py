@@ -57,7 +57,7 @@ class UserFabkit(SimpleBase):
             ' sed -i "/^\[web\]/,/^\[/s/#hostname =.*/hostname = */g" fabfile.ini'.format(repo))
 
         data = {
-            'port': 8080,
+            'port': 80,
             'repo': repo,
             'user': env.user,
             'group': env.user,
@@ -99,8 +99,8 @@ class UserFabkit(SimpleBase):
 
         # install
         sudo('npm install -g coffee-script'.format(repo))
-        run('cd {0}/fabfile/core/webapp && npm install'.format(repo))
+        sudo('cd {0}/fabfile/core/webapp && npm install'.format(repo))
 
         # install node packages for develop
         sudo('npm install -g grunt-cli'.format(repo))
-        run('cd {0}/fabfile/core/webapp/node_chat && npm install'.format(repo))
+        sudo('cd {0}/fabfile/core/webapp/node_chat && npm install'.format(repo))

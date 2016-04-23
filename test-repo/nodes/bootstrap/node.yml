@@ -6,31 +6,27 @@ node_map:
       - test_bootstrap/base
 
 test_bootstrap:
-  dockers:
+  libvirt:
+    gateway: 192.168.122.1
+    netmask: 255.255.255.0
+  libvirt_vms:
     - name: centos7
-      template: Dockerfile_centos7
-      sudo_group: wheel
-      use_systemd: true
+      template: user-data_centos7
+      src_image: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1511.qcow2c.xz
+      vcpus: 1
+      ip: 192.168.122.50
+      ram: 4096
+      disk_size: 20
+    - name: centos7_2
+      template: user-data_centos7
+      src_image: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1511.qcow2c.xz
+      vcpus: 1
+      ip: 192.168.122.51
+      ram: 4096
+      disk_size: 20
+  iptables:
+    - ip: 192.168.122.55
       ports:
-        - [22, 31022]
-        - [80, 31080]
-        - [3306, 31330]
-        - [8000, 31800]
-        - [8080, 31808]
-        - [8888, 31888]
-        - [9000, 31900]
-        - [9090, 31909]
-        - [9999, 31999]
-    - name: ubuntu14
-      template: Dockerfile_ubuntu14
-      sudo_group: sudo
-      ports:
-        - [22, 32022]
-        - [80, 32080]
-        - [3306, 32330]
-        - [8000, 32800]
-        - [8080, 32808]
-        - [8888, 32888]
-        - [9000, 32900]
-        - [9090, 32909]
-        - [9999, 32999]
+        - [40080, 40080]
+        - [43306, 43306]
+        - [49999, 49999]

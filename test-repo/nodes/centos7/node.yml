@@ -1,9 +1,58 @@
-env:
-  port: 31022
-
 node_map:
-  centos7:
+  localhost:
     hosts:
       - localhost
     fabruns:
-      - test/base
+      - fabkit_tools/fablocal
+
+  fabserver:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/fabserver
+
+  fabclient:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/fabclient
+
+  openstack:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/bootstrap
+      - fabkit_tools/memcache
+      - fabkit_tools/keystone
+      - fabkit_tools/swift
+
+  gluster:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/gluster
+
+  mysql:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/mysql
+
+  rabbitmq:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/rabbitmq
+
+  haproxy:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/haproxy
