@@ -97,10 +97,22 @@ class FabServer(SimpleBase):
 
         sudo('/opt/fabkit/bin/fabserver -l')
 
+        if env.host == env.hosts[0]:
+            sudo('/opt/fabkit/bin/fabserver sync_db')
+            sudo("cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp && "
+                 "echo \"from django.contrib.auth.models import User;"
+                 "User.objects.create_superuser('admin', 'admin@example.com', 'admin')\""
+                 " | /opt/fabkit/bin/python manage.py shell")
+
+        sudo('npm install -g coffee-script')
+        sudo('cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp/node_modules && '
+             'npm install')
+
         return
 
         # install
-        sudo('npm install -g coffee-script'.format(repo))
+        sudo('cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp/node_modules && '
+             'npm install -g coffee-script')
         sudo('cd {0}/fabfile/core/webapp && npm install'.format(repo))
 
         # install node packages for develop

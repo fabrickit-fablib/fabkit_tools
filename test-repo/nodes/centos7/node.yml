@@ -1,10 +1,4 @@
 node_map:
-  localhost:
-    hosts:
-      - localhost
-    fabruns:
-      - fabkit_tools/fablocal
-
   fabserver:
     hosts:
       - 192.168.122.50
