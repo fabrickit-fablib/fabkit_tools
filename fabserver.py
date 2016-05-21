@@ -1,9 +1,12 @@
 # coding: utf-8
 
 import re
-from fabkit import filer, sudo, env, scp
+from fabkit import filer, sudo, env
 from fablib.base import SimpleBase
+from oslo_config import cfg
 from fablib.python import Python
+
+CONF = cfg.CONF
 
 
 class FabServer(SimpleBase):
@@ -39,6 +42,7 @@ class FabServer(SimpleBase):
         self.services = {
             'CentOS Linux 7.*': [
                 'httpd',
+                'fabnode',
             ],
             'Ubuntu 14.*': [
                 'apache2',
@@ -55,38 +59,25 @@ class FabServer(SimpleBase):
     def setup(self):
         data = self.init()
         self.install_packages()
-        self.start_services().enable_services()
 
-        var_dir = '{0}/var'.format(data['prefix'])
-        repo = '{0}/fabkit-repo-server'.format(var_dir)
-        filer.mkdir(var_dir, owner=data['owner'])
-        filer.mkdir(repo, owner=data['owner'])
+        var_dir = CONF.client.package_var_dir
+        common_repo = '{0}/fabkit-repo-common'.format(var_dir)
+        server_repo = '{0}/fabkit-repo-server'.format(var_dir)
+        filer.template('{0}/fabfile.ini'.format(server_repo), data=data)
 
-        data.update({
-            'repo': repo,
-            'python_path': self.python.get_site_packages(),
-        })
-
-        filer.template('{0}/fabfile.ini'.format(repo), data=data)
-
-        # git.setup()
-        # git.sync('https://github.com/fabrickit/fabkit.git',
-        #          dest='{0}/fabfile'.format(repo), user=data['user'])
-        sudo('rm -rf /tmp/fabfile*')
-        sudo('rm -rf {0}/fabfile'.format(repo))
-        scp('/tmp/fabfile.tar.gz', '/tmp/fabfile.tar.gz')
-        sudo('cd /tmp/ && tar xzf /tmp/fabfile.tar.gz '
-             '&& cp -r fabfile {0}/fabfile '
-             '&& chown -R {1}:{2} {0}/fabfile'.format(
-                 repo, data['user'], data['group']))
-
-        filer.template('{0}/bin/fabserver'.format(data['prefix']),
-                       src='fabric.sh', data=data, mode='755')
+        sudo('rm -rf {0}/fabfile && '
+             'cp -r {1}/fabfile {0}/fabfile && '
+             'chown -R {2}:{3} {0}/fabfile'.format(
+                 server_repo, common_repo, data['user'], data['group']))
 
         if re.match('CentOS .*', env.node['os']):
             log_prefix = '/var/log/httpd/{0}'.format(env.user)
-            data['error_log'] = 'fabkit-error.log'.format(log_prefix)
-            data['custom_log'] = 'fabkit-access.log'.format(log_prefix)
+            data.update({
+                'repo': server_repo,
+                'python_path': self.python.get_site_packages(),
+                'error_log': 'fabkit-error.log'.format(log_prefix),
+                'custom_log': 'fabkit-access.log'.format(log_prefix),
+            })
 
             if filer.template(src='httpd.conf',
                               dest='/etc/httpd/conf.d/fabkit_httpd.conf'.format(env.user),
@@ -95,26 +86,17 @@ class FabServer(SimpleBase):
 
         self.exec_handlers()
 
-        sudo('/opt/fabkit/bin/fabserver -l')
-
         if env.host == env.hosts[0]:
-            sudo('/opt/fabkit/bin/fabserver sync_db')
+            sudo("cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp && "
+                 "/opt/fabkit/bin/python manage.py migrate --noinput")
+
             sudo("cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp && "
                  "echo \"from django.contrib.auth.models import User;"
                  "User.objects.create_superuser('admin', 'admin@example.com', 'admin')\""
                  " | /opt/fabkit/bin/python manage.py shell")
 
-        sudo('npm install -g coffee-script')
-        sudo('cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp/node_modules && '
-             'npm install')
+        self.start_services().enable_services()
 
-        return
+        self.restart_services()
 
-        # install
-        sudo('cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp/node_modules && '
-             'npm install -g coffee-script')
-        sudo('cd {0}/fabfile/core/webapp && npm install'.format(repo))
-
-        # install node packages for develop
-        sudo('npm install -g grunt-cli'.format(repo))
-        sudo('cd {0}/fabfile/core/webapp/node_chat && npm install'.format(repo))
+        sudo('/opt/fabkit/bin/fabserver -l')

@@ -2,37 +2,37 @@ bootstrap:
   status_flow: [1]
 
 mysql:
+  status_flow: [1]
   require:
     fabkit_tools/bootstrap: 1
-  status_flow: [1]
 
 memcache:
   status_flow: [1]
+  require:
+    fabkit_tools/bootstrap: 1
 
 gluster:
+  status_flow: [1]
   require:
     fabkit_tools/bootstrap: 1
-  status_flow: [1]
 
 haproxy:
+  status_flow: [1]
   require:
     fabkit_tools/bootstrap: 1
-  status_flow: [1]
 
 rabbitmq:
+  status_flow: [1]
   require:
     fabkit_tools/bootstrap: 1
-  status_flow: [1]
 
-keystone:
+fabclient:
   status_flow: [1]
   require:
-    fabkit_tools/bootstrap: 1
     fabkit_tools/mysql: 1
     fabkit_tools/haproxy: 1
 
-swift:
+fabserver:
   status_flow: [1]
   require:
-    fabkit_tools/keystone: 1
-    fabkit_tools/memcache: 1
+    fabkit_tools/fabclient: 1

@@ -1,4 +1,11 @@
 node_map:
+  common:
+    hosts:
+      - 192.168.122.50
+      - 192.168.122.51
+    fabruns:
+      - fabkit_tools/bootstrap
+
   fabserver:
     hosts:
       - 192.168.122.50
@@ -12,16 +19,6 @@ node_map:
       - 192.168.122.51
     fabruns:
       - fabkit_tools/fabclient
-
-  openstack:
-    hosts:
-      - 192.168.122.50
-      - 192.168.122.51
-    fabruns:
-      - fabkit_tools/bootstrap
-      - fabkit_tools/memcache
-      - fabkit_tools/keystone
-      - fabkit_tools/swift
 
   gluster:
     hosts:
@@ -50,3 +47,13 @@ node_map:
       - 192.168.122.51
     fabruns:
       - fabkit_tools/haproxy
+
+#  openstack:
+#    hosts:
+#      - 192.168.122.50
+#      - 192.168.122.51
+#    fabruns:
+#      - fabkit_tools/bootstrap
+#      - fabkit_tools/memcache
+#      - fabkit_tools/keystone
+#      - fabkit_tools/swift

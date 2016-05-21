@@ -5,3 +5,14 @@ fabkit_tools:
   os_username: service
   os_password: service_password
   clusters: centos7/
+  database:
+    connection: mysql+pymysql://${#mysql.cluster_map.common.user_map.fabkit.user}:${#mysql.cluster_map.common.user_map.fabkit.password}@${#mysql.cluster_map.common.endpoint}/fabkit
+  fabcluster:
+    database_map: "testcluster: mysql+pymysql://${#mysql.cluster_map.common.user_map.fabkit.user}:${#mysql.cluster_map.common.user_map.fabkit.password}@${#mysql.cluster_map.common.endpoint}/fabkit"
+  web:
+    node_port: 4000
+    nodes:
+      - http://192.168.122.50:4000
+      - http://192.168.122.51:4000
+    node_public_host: 192.168.11.50
+    node_public_port: 44000

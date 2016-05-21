@@ -9,3 +9,5 @@ from fablib.fabkit_tools import FabServer
 def setup():
     fabserver = FabServer()
     fabserver.setup()
+
+    return {'status': 1}
