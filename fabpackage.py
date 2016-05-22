@@ -51,6 +51,7 @@ class FabPackage(SimpleBase):
 
         var_dir = CONF.client.package_var_dir
         tmp_dir = os.path.join(var_dir, 'tmp')
+        log_dir = '/var/log/fabkit'
         common_repo = '{0}/fabkit-repo-common'.format(var_dir)
         client_repo = '{0}/fabkit-repo-client'.format(var_dir)
         server_repo = '{0}/fabkit-repo-server'.format(var_dir)
@@ -62,6 +63,7 @@ class FabPackage(SimpleBase):
         self.install_packages()
         self.python.setup()
         filer.mkdir(var_dir, owner=data['owner'])
+        filer.mkdir(log_dir, owner=data['owner'])
         filer.mkdir(tmp_dir, owner=data['owner'], mode='777')
 
         filer.mkdir(common_repo, owner=data['owner'])

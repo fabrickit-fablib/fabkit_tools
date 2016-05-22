@@ -87,13 +87,15 @@ class FabServer(SimpleBase):
         self.exec_handlers()
 
         if env.host == env.hosts[0]:
-            sudo("cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp && "
-                 "/opt/fabkit/bin/python manage.py migrate --noinput")
+            sudo("cd {0}/fabfile/core/webapp && "
+                 "{1}/bin/python manage.py migrate --noinput".format(
+                     server_repo, CONF.client.package_prefix))
 
-            sudo("cd /opt/fabkit/var/fabkit-repo-server/fabfile/core/webapp && "
+            sudo("cd {0}/fabfile/core/webapp && "
                  "echo \"from django.contrib.auth.models import User;"
                  "User.objects.create_superuser('admin', 'admin@example.com', 'admin')\""
-                 " | /opt/fabkit/bin/python manage.py shell")
+                 " | {1}/bin/python manage.py shell".format(
+                     server_repo, CONF.client.package_prefix))
 
         self.start_services().enable_services()
 
